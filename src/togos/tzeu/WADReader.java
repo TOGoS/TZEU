@@ -1,17 +1,11 @@
 package togos.tzeu;
 
-import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
 public class WADReader
 {
-	protected Blob wadBlob;
-	public List lumps;
-	
-	public WADReader( ReadableBlob wadBlob ) {
-		this.wadBlob = wadBlob;
-	}
-	
-	public List readLumps() {
-		wadBlob
+	public List readLumps( Blob wadBlob ) {
+		return Collections.EMPTY_LIST;
 	}
 }
