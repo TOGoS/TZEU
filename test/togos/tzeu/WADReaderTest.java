@@ -23,6 +23,9 @@ public class WADReaderTest extends TestCase
 		}
 		Blob wadBlob = new ByteArrayBlob( baos.toByteArray() );
 		List lumps = new WADReader().readLumps(wadBlob);
+
+		assertEquals( 15, lumps.size() );
+		
 		String lumpNames = "";
 		for( int i=0; i<lumps.size(); ++i ) {
 			Lump l = (Lump)lumps.get(i);
