@@ -48,18 +48,24 @@ public class ByteUtil
 		if( l > Integer.MAX_VALUE ) throw new RuntimeException("Long too large to cast to int: "+l);
 		return (int)l;
 	}
-
-	public static final int decodeInt32( byte[] d, int offset ) {
+	
+	public static final short leShort( byte[] d, int offset ) {
+		return (short)(
+			((d[offset+0]&0xFF) <<  0) +
+			((d[offset+1]&0xFF) <<  8));
+	}
+	
+	public static final int leInteger( byte[] d, int offset ) {
 		return
 			((d[offset+0]&0xFF) <<  0) +
 			((d[offset+1]&0xFF) <<  8) +
 			((d[offset+2]&0xFF) << 16) +
 			((d[offset+3]&0xFF) << 24);
 	}
-
-	public static final int readInt32( Blob b, int offset ) throws IOException {
+	
+	public static final int leInteger( Blob b, int offset ) throws IOException {
 		byte[] data = new byte[4];
 		b.read(offset, data, 0, 4);
-		return decodeInt32(data,0);
+		return leInteger(data,0);
 	}
 }

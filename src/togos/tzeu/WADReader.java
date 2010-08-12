@@ -12,14 +12,14 @@ public class WADReader
 		wadBlob.read(deOffset, buf, 0, 16);
 		
 		Lump lump = new Lump();
-		lump.data = new SubBlob(wadBlob, ByteUtil.decodeInt32(buf,0), ByteUtil.decodeInt32(buf,4)); //not right!
+		lump.data = new SubBlob(wadBlob, ByteUtil.leInteger(buf,0), ByteUtil.leInteger(buf,4)); //not right!
 		lump.name = ByteUtil.paddedString( buf, 8, 8 );
 		return lump;
 	}
 	
 	public List readLumps( Blob wadBlob ) throws IOException {
-		int lumpCount = ByteUtil.readInt32( wadBlob, 4 );
-		int directoryOffset = ByteUtil.readInt32( wadBlob, 8 );
+		int lumpCount = ByteUtil.leInteger( wadBlob, 4 );
+		int directoryOffset = ByteUtil.leInteger( wadBlob, 8 );
 		List lumps = new ArrayList(lumpCount);
 		for( int i=0; i<lumpCount; ++i ) {
 			lumps.add(readLumpFromDirectory(wadBlob, directoryOffset));

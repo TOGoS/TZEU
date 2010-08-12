@@ -69,7 +69,9 @@ public class WADReaderTest extends TestCase
 	 *    15 things
 	 *    
 	 * Vertex 254 @ 288,-224
-	 * Line 254 has sidedef 1 = 325, sidedef 2 = 315
+	 * Line 254:
+	 *   vertexes 222 to 221
+	 *   sidedef 1 = 325, sidedef 2 = 315
 	 * Sidedef 98:
 	 *   up = BROWN1, normal = -, lower = BROWN1,
 	 *   xoffset = 91, yoffset = 64, sector = 11
@@ -80,6 +82,14 @@ public class WADReaderTest extends TestCase
 		assertNotNull( linedefLump );
 		List linedefs = lr.readHexenLinedefs( linedefLump.getData() );
 		assertEquals( 385, linedefs.size() );
+		
+		Linedef testLinedef = (Linedef)linedefs.get(254);
+		assertEquals( 222, testLinedef.vertex1Index );
+		assertEquals( 221, testLinedef.vertex2Index );
+		assertEquals( 325, testLinedef.sidedef1Index );
+		assertEquals( 315, testLinedef.sidedef2Index );
+		
+		// TODO: more tests on linedefs!
 	}
 	
 	public void testReadSidedefs() throws IOException {
@@ -87,5 +97,7 @@ public class WADReaderTest extends TestCase
 		assertNotNull( sidedefLump );
 		List sidedefs = lr.readSidedefs( sidedefLump.getData() );
 		assertEquals( 490, sidedefs.size() );
+		
+		// TODO: more tests!
 	}
 }
