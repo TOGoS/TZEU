@@ -83,11 +83,24 @@ public class WADReaderTest extends TestCase
 		List linedefs = lr.readHexenLinedefs( linedefLump.getData() );
 		assertEquals( 385, linedefs.size() );
 		
-		Linedef testLinedef = (Linedef)linedefs.get(254);
-		assertEquals( 222, testLinedef.vertex1Index );
-		assertEquals( 221, testLinedef.vertex2Index );
-		assertEquals( 325, testLinedef.sidedef1Index );
-		assertEquals( 315, testLinedef.sidedef2Index );
+		int eflags =
+			Linedef.REPEAT_SPECIAL |
+			Linedef.TWOSIDED |
+			Linedef.DONTPEGTOP;
+		
+		Linedef testLinedef = (Linedef)linedefs.get(290);
+		assertEquals( 239, testLinedef.vertex1Index );
+		assertEquals( 242, testLinedef.vertex2Index );
+		assertEquals( 206, testLinedef.special );
+		assertEquals( eflags, testLinedef.flags );
+		assertEquals( Linedef.SPAC_Use, testLinedef.trigger );
+		assertEquals(   0, testLinedef.arg1 );
+		assertEquals(  16, testLinedef.arg2 );
+		assertEquals(  50, testLinedef.arg3 );
+		assertEquals(   8, testLinedef.arg4 );
+		assertEquals(   0, testLinedef.arg5 );
+		assertEquals( 379, testLinedef.sidedef1Index );
+		assertEquals( 373, testLinedef.sidedef2Index );
 		
 		// TODO: more tests on linedefs!
 	}

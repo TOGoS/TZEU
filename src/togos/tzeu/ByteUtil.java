@@ -49,6 +49,16 @@ public class ByteUtil
 		return (int)l;
 	}
 	
+	public static final int leUByte( byte[] d, int offset ) {
+		return d[offset+0]&0xFF;
+	}
+	
+	public static final int leUShort( byte[] d, int offset ) {
+		return
+			((d[offset+0]&0xFF) <<  0) +
+			((d[offset+1]&0xFF) <<  8);
+	}
+
 	public static final short leShort( byte[] d, int offset ) {
 		return (short)(
 			((d[offset+0]&0xFF) <<  0) +
@@ -67,5 +77,15 @@ public class ByteUtil
 		byte[] data = new byte[4];
 		b.read(offset, data, 0, 4);
 		return leInteger(data,0);
+	}
+	
+	/**
+	 * Treats the number as an unsigned short, unless it's 0xFFFF, in which case it is treated as -1.
+	 */
+	public static final int leShortSidedefIndex( byte[] d, int offset ) {
+		int num =
+			((d[offset+0]&0xFF) <<  0) +
+			((d[offset+1]&0xFF) <<  8);
+		return (num == 0xFFFF) ? -1 : num;
 	}
 }
