@@ -37,7 +37,7 @@ public class Linedef
 	public int vertex2Index;
 	public int flags;
 	public int trigger;
-	public int special;
-	public int arg1,arg2,arg3,arg4,arg5;
+	public int special=0;
+	public int arg1=0,arg2=0,arg3=0,arg4=0,arg5=0;
 	public int sidedef1Index=-1,sidedef2Index=-1;
 }

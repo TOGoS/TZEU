@@ -111,6 +111,12 @@ public class WADReaderTest extends TestCase
 		List sidedefs = lr.readSidedefs( sidedefLump.getData() );
 		assertEquals( 490, sidedefs.size() );
 		
-		// TODO: more tests!
+		Sidedef testSidedef = (Sidedef)sidedefs.get(98);
+		assertEquals( 91, testSidedef.xOffset );
+		assertEquals( 64, testSidedef.yOffset );
+		assertEquals( 11, testSidedef.sectorIndex );
+		assertEquals( "BROWN1", testSidedef.upperTexture );
+		assertEquals( "BROWN1", testSidedef.lowerTexture );
+		assertEquals( "-",      testSidedef.normalTexture );
 	}
 }

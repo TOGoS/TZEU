@@ -2,7 +2,6 @@ package togos.tzeu;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,7 +44,28 @@ public class LevelReader
 	
 	//// Sidedefs ////
 	
+	public Sidedef readSidedef( Blob b, int offset ) throws IOException {
+		byte[] buf = new byte[30];
+		b.read( offset, buf, 0, 30 );
+		Sidedef s = new Sidedef();
+		s.xOffset       = ByteUtil.leShort( buf, 0 );
+		s.yOffset       = ByteUtil.leShort( buf, 2 );
+		s.upperTexture  = ByteUtil.paddedString( buf,  4, 8 );
+		s.lowerTexture  = ByteUtil.paddedString( buf, 12, 8 );
+		s.normalTexture = ByteUtil.paddedString( buf, 20, 8 );
+		s.sectorIndex   = ByteUtil.leUShort( buf, 28 );
+		return s;
+	}
+	
 	public List readSidedefs( Blob b ) throws IOException {
-		return Collections.EMPTY_LIST;
+		int bloblen = ByteUtil.integer(b.getLength());
+		if( bloblen % 30 != 0 ) {
+			System.err.println("Warning: sidedef lump is not multiple of 30 bytes");
+		}
+		ArrayList sidedefs = new ArrayList(bloblen/30);
+		for( int i=0; i<bloblen; i+=30 ) {
+			sidedefs.add(readSidedef(b, i));
+		}
+		return sidedefs;
 	}
 }
