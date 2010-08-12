@@ -25,14 +25,16 @@ public class ByteArrayBlob implements Blob
 	public int read(long blobOffset, byte[] dest, int destOffset, int length)
 		throws IOException
 	{
-		int l = (int)(blobOffset + length > this.length ? this.length - blobOffset : length);
-		for( int i=0; i<l; ++i ) {
+		if( blobOffset + length > this.length ) length = ByteUtil.integer(this.length - blobOffset);
+		for( int i=0; i<length; ++i ) {
 			dest[destOffset+i] = data[(int)blobOffset+i];
 		}
-		return l;
+		return length;
 	}
 
-	public void writeTo(OutputStream os) throws IOException {
-		os.write(data, offset, length);
+	public long writeTo( long blobOffset, OutputStream os, long length ) throws IOException {
+		if( blobOffset + length > this.length ) length = ByteUtil.integer(this.length - blobOffset);
+		os.write(data, ByteUtil.integer(offset+blobOffset), ByteUtil.integer(length));
+		return length;
 	}
 }

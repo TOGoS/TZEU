@@ -26,14 +26,15 @@ public class RandomAccessFileBlob implements Blob
 		return read;
 	}
 	
-	public void writeTo(OutputStream os) throws IOException {
-		raf.seek(0);
+	public long writeTo( long offset, OutputStream os, long length ) throws IOException {
+		raf.seek(offset);
 		byte[] dest = new byte[1024];
-		int read = 0;
+		long read = 0;
 		int z;
-		while( (z = raf.read(dest, 0, dest.length)) > 0 ) {
+		while( (z = raf.read(dest, 0, (int)(read+dest.length > length ? length-read : dest.length))) > 0 ) {
 			os.write(dest, 0, z);
 			read += z;
 		}
+		return read;
 	}
 }
