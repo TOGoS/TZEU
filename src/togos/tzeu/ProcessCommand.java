@@ -12,6 +12,7 @@ public class ProcessCommand
 	String outfilename = null;
 	
 	boolean preCompress = false;
+	boolean listPreCompress = false;
 	
 	public ProcessCommand( String[] args ) {
 		for( int i=0; i<args.length; ++i ) {
@@ -21,6 +22,9 @@ public class ProcessCommand
 				mapname = args[++i];
 			} else if( "-pre-compress-sidedefs".equals(args[i]) ) {
 				preCompress = true;
+			} else if( "-list-pre-compress-sidedefs".equals(args[i]) ) {
+				preCompress = true;
+				listPreCompress = true;
 			} else if( args[i].length() == 0 || args[i].charAt(0) != '-' ) {
 				infilename = args[i];
 			} else {
@@ -72,6 +76,16 @@ public class ProcessCommand
 			System.err.println("Original     : "+l.sidedefs.size());
 			System.err.println("Comrpessed   : "+pcr.remappedItems.size());
 			System.err.println("Would remove : "+(l.sidedefs.size()-pcr.remappedItems.size()));
+			if( listPreCompress ) {
+				System.err.println("-- The following lines have compressable sidedefs --");
+				for( int i=0; i<l.linedefs.size(); ++i ) {
+					Linedef theline = (Linedef)l.linedefs.get(i);
+					if( (theline.sidedef1Index >= 0 && pcr.duplicates[theline.sidedef1Index]) ||
+						(theline.sidedef2Index >= 0 && pcr.duplicates[theline.sidedef2Index]) ) {
+						System.err.println(i);
+					}
+				}
+			}
 		}
 		
 		return 0;

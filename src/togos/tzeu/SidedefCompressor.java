@@ -13,10 +13,12 @@ public class SidedefCompressor
 		public List remappedItems;
 		/** Maps old indexes to new */
 		public int[] indexMap;
+		public boolean[] duplicates;
 		
-		public RemapResult( List items, int[] indexMap ) {
+		public RemapResult( List items, int[] indexMap, boolean[] duplicates ) {
 			this.remappedItems = items;
 			this.indexMap = indexMap;
+			this.duplicates = duplicates;
 		}
 	}
 	
@@ -40,19 +42,22 @@ public class SidedefCompressor
 	public RemapResult preCompress( List sidedefs ) {
 		ArrayList newItems = new ArrayList();
 		int[] indexMap = new int[sidedefs.size()];
+		boolean[] duplicates = new boolean[sidedefs.size()];
 		HashMap newIndexes = new HashMap();
 		for( int i=0; i<sidedefs.size(); ++i ) {
 			Sidedef side = (Sidedef)sidedefs.get(i);
 			Integer exiso;
 			if( sidedefIsCompressable(side,i) && (exiso = (Integer)newIndexes.get(side)) != null ) {
 				indexMap[i] = exiso.intValue();
+				duplicates[i] = true;
 			} else {
 				newIndexes.put(side, new Integer(newItems.size()));
 				indexMap[i] = newItems.size();
 				newItems.add(side);
+				duplicates[i] = false;
 			}
 		}
-		return new RemapResult( newItems, indexMap );
+		return new RemapResult( newItems, indexMap, duplicates );
 	}
 	
 	protected int remapSidedefRef( int ref, int[] map ) {
