@@ -2,6 +2,8 @@ package togos.tzeu;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -9,6 +11,43 @@ import java.util.List;
  */
 public class LevelReader
 {
+	static HashSet mapLumpNames = new HashSet();
+	static {
+		mapLumpNames.add("TEXTMAP");
+		mapLumpNames.add("ENDMAP");
+		mapLumpNames.add("THINGS");
+		mapLumpNames.add("LINEDEFS");
+		mapLumpNames.add("SIDEDEFS");
+		mapLumpNames.add("VERTEXES");
+		mapLumpNames.add("SEGS");
+		mapLumpNames.add("SSECTORS");
+		mapLumpNames.add("NODES");
+		mapLumpNames.add("SECTORS");
+		mapLumpNames.add("REJECT");
+		mapLumpNames.add("BLOCKMAP");
+		mapLumpNames.add("BEHAVIOR");
+		mapLumpNames.add("SCRIPTS");
+	}
+	
+	public List readLevelLumps( List lumps, String levelName ) {
+		for( Iterator i=lumps.iterator(); i.hasNext(); ) {
+			Lump l = (Lump)i.next();
+			if( levelName.equals(l.getName()) ) {
+				List levelLumps = new ArrayList();
+				levelLumps.add(l);
+				levelLumps: while( i.hasNext() && mapLumpNames.contains( (l = (Lump)i.next()).getName() ) ) {
+					levelLumps.add(l);
+					if( "ENDMAP".equals(l.getName()) ) {
+						// Explicit end!  So quit
+						break levelLumps;
+					}
+				}
+				return levelLumps;
+			}
+		}
+		return null;
+	}
+	
 	//// Linedefs ////
 	
 	public Linedef readHexenLinedef( Blob b, int offset ) throws IOException {

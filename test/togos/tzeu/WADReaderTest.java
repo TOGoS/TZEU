@@ -101,8 +101,6 @@ public class WADReaderTest extends TestCase
 		assertEquals(   0, testLinedef.arg5 );
 		assertEquals( 379, testLinedef.sidedef1Index );
 		assertEquals( 373, testLinedef.sidedef2Index );
-		
-		// TODO: more tests on linedefs!
 	}
 	
 	public void testReadSidedefs() throws IOException {
@@ -118,5 +116,10 @@ public class WADReaderTest extends TestCase
 		assertEquals( "BROWN1", testSidedef.upperTexture );
 		assertEquals( "BROWN1", testSidedef.lowerTexture );
 		assertEquals( "-",      testSidedef.normalTexture );
+	}
+	
+	public void testReadLevelLumps() {
+		List mapLumps = lr.readLevelLumps( lumps, "MAP30" );
+		assertEquals( 13, mapLumps.size() );
 	}
 }
