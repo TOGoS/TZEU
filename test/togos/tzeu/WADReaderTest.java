@@ -9,31 +9,46 @@ import junit.framework.TestCase;
 
 public class WADReaderTest extends TestCase
 {
-	Blob wadBlob;
-	WADReader wr;
-	LevelReader lr;
-	List lumps;
+	static WADReader wr = new WADReader();
+	static LevelReader lr = new LevelReader();
 	
-	public WADReaderTest() throws IOException {
-		wr = new WADReader();
-		lr = new LevelReader();
-		
-		InputStream wadStream = this.getClass().getResourceAsStream("C30.wad");
-		if( wadStream == null ) {
-			fail("Couldn't open C30.wad");
-			return;
+	public static Blob getWad() {
+		try {
+			InputStream wadStream = WADReaderTest.class.getResourceAsStream("C30.wad");
+			if( wadStream == null ) {
+				return null;
+			}
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			int z;
+			byte[] buf = new byte[1024];
+			while( (z = wadStream.read(buf)) > 0 ) {
+				baos.write(buf,0,z);
+			}
+			return new ByteArrayBlob( baos.toByteArray() );
+		} catch( IOException e ) {
+			throw new RuntimeException(e);
 		}
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		int z;
-		byte[] buf = new byte[1024];
-		while( (z = wadStream.read(buf)) > 0 ) {
-			baos.write(buf,0,z);
+	}
+	
+	public static List getLumps() {
+		try {
+			return wr.readLumps(getWad());
+		} catch( IOException e ) {
+			throw new RuntimeException(e);
 		}
-		wadBlob = new ByteArrayBlob( baos.toByteArray() );
-		lumps = wr.readLumps(wadBlob);
+	}
+	
+	public static Level getLevel() {
+		try {
+			return lr.readLevel( getLumps(), "MAP30" );
+		} catch( IOException e ) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public void testReadWad() throws IOException {
+		List lumps = getLumps();
+		
 		assertEquals( 15, lumps.size() );
 		
 		String lumpNames = "";
@@ -78,6 +93,8 @@ public class WADReaderTest extends TestCase
 	 */
 
 	public void testReadLinedefs() throws IOException {
+		List lumps = getLumps();
+		
 		Lump linedefLump = wr.findLump( lumps, "LINEDEFS", "MAP30" );
 		assertNotNull( linedefLump );
 		List linedefs = lr.readHexenLinedefs( linedefLump.getData() );
@@ -104,7 +121,7 @@ public class WADReaderTest extends TestCase
 	}
 	
 	public void testReadSidedefs() throws IOException {
-		Lump sidedefLump = wr.findLump( lumps, "SIDEDEFS", "MAP30" );
+		Lump sidedefLump = wr.findLump( getLumps(), "SIDEDEFS", "MAP30" );
 		assertNotNull( sidedefLump );
 		List sidedefs = lr.readSidedefs( sidedefLump.getData() );
 		assertEquals( 490, sidedefs.size() );
@@ -119,7 +136,13 @@ public class WADReaderTest extends TestCase
 	}
 	
 	public void testReadLevelLumps() {
-		List mapLumps = lr.readLevelLumps( lumps, "MAP30" );
+		List mapLumps = lr.readLevelLumps( getLumps(), "MAP30" );
 		assertEquals( 13, mapLumps.size() );
+	}
+
+	public void testReadLevel() {
+		Level l = getLevel();
+		assertEquals( 385, l.linedefs.size() );
+		assertEquals( 490, l.sidedefs.size() );
 	}
 }

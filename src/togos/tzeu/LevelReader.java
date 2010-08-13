@@ -107,4 +107,21 @@ public class LevelReader
 		}
 		return sidedefs;
 	}
+	
+	public Level readLevel( List levelLumps ) throws IOException {
+		Level l = new Level();
+		l.lumps = levelLumps;
+		l.linedefs = readHexenLinedefs(l.getLump("LINEDEFS").getData());
+		l.sidedefs = readSidedefs(l.getLump("SIDEDEFS").getData());
+		return l;
+	}
+
+	public Level readLevel( List lumps, String levelName ) throws IOException {
+		return readLevel( readLevelLumps(lumps, levelName) );
+	}
+	
+	public Level readLevel( Blob wadBlob, String levelName ) throws IOException {
+		WADReader wr = new WADReader();
+		return readLevel( wr.readLumps(wadBlob), levelName );
+	}
 }

@@ -3,17 +3,19 @@ package togos.tzeu;
 import java.util.Iterator;
 import java.util.List;
 
-public class Level
+public class Level implements Cloneable
 {
-	List things;
-	List linedefs;
-	List sidedefs;
-	List vertexes;
-	List sectors;
+	public Level() { }
+	
+	public List things;
+	public List linedefs;
+	public List sidedefs;
+	public List vertexes;
+	public List sectors;
 	
 	/** List of lumps defining this map, including the map
 	 * header (MAPxx), SCRIPTS, and ENDMAP, if they exist */
-	List lumps;
+	public List lumps;
 	
 	public Lump getLump(String name) {
 		for( Iterator i=lumps.iterator(); i.hasNext(); ) {
@@ -23,5 +25,13 @@ public class Level
 			}
 		}
 		return null;
+	}
+	
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch( CloneNotSupportedException e ) {
+			throw new RuntimeException(e);
+		}
 	}
 }

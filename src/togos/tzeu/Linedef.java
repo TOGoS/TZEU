@@ -1,6 +1,6 @@
 package togos.tzeu;
 
-public class Linedef
+public class Linedef implements Cloneable
 {
 	/**
 	 * These flags are chosen to be compatible
@@ -40,4 +40,12 @@ public class Linedef
 	public int special=0;
 	public int arg1=0,arg2=0,arg3=0,arg4=0,arg5=0;
 	public int sidedef1Index=-1,sidedef2Index=-1;
+	
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch( CloneNotSupportedException e ) {
+			throw new RuntimeException(e);
+		}
+	}
 }
