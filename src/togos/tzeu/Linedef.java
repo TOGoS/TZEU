@@ -48,4 +48,31 @@ public class Linedef implements Cloneable
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public boolean equals( Object o ) {
+		if( o instanceof Linedef ) {
+			Linedef ol = (Linedef)o;
+			return
+				ol.vertex1Index == vertex1Index &&
+				ol.vertex2Index == vertex2Index &&
+				ol.flags == flags &&
+				ol.trigger == trigger &&
+				ol.special == special &&
+				ol.arg1 == arg1 &&
+				ol.arg2 == arg2 &&
+				ol.arg3 == arg3 &&
+				ol.arg4 == arg4 &&
+				ol.arg5 == arg5 &&
+				ol.sidedef1Index == sidedef1Index &&
+				ol.sidedef2Index == sidedef2Index;
+		}
+		return false;
+	}
+	
+	public int hashCode() {
+		return
+			vertex1Index ^ vertex2Index ^ flags ^ trigger ^
+			special ^ arg1 ^ arg2 ^ arg3 ^ arg4 ^ arg5 ^
+			sidedef1Index ^ sidedef2Index;
+	}
 }

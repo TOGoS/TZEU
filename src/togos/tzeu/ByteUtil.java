@@ -24,6 +24,15 @@ public class ByteUtil
 		buf[offset+3] = (byte)(i >> 24);
 	}
 	
+	public static final void encodeShort( int i, byte[] buf, int offset ) {
+		buf[offset+0] = (byte)(i >>  0);
+		buf[offset+1] = (byte)(i >>  8);
+	}
+
+	public static final void encodeByte( int i, byte[] buf, int offset ) {
+		buf[offset+0] = (byte)(i >>  0);
+	}
+
 	//// Decoding functions ////
 	
 	public static final String paddedString( byte[] buf, int offset, int length ) {
