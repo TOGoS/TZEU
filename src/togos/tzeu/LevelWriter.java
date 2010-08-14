@@ -1,9 +1,28 @@
 package togos.tzeu;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LevelWriter
 {
+	public Lump lump( String name, Blob data ) {
+		Lump l = new Lump();
+		l.name = name;
+		l.data = data;
+		return l;
+		
+	}
+	
+	public Lump blankLump(String name) {
+		return lump(name, new ByteArrayBlob(new byte[0]));
+	}
+	
+	protected Lump extractOrBlank( Level l, String name ) {
+		Lump u = l.getLump(name);
+		if( u != null ) return u;
+		return blankLump(name);
+	}
+	
 	public void encodeHexenLinedef( Linedef l, byte[] buf, int offset )
 	{
 		ByteUtil.encodeShort(l.vertex1Index, buf, offset+0);
@@ -61,5 +80,33 @@ public class LevelWriter
 
 	public Blob sidedefBlob( List sidedefs ) {
 		return new SidedefBlob( sidedefs );
+	}
+	
+	public List lumpify( Level l ) {
+		List newLumps = new ArrayList();
+		Lump u;
+		
+		newLumps.add(l.lumps.get(0));
+		
+		newLumps.add(extractOrBlank(l, "THINGS"));
+		
+		if( l.linedefs != null ) newLumps.add( lump("LINEDEFS",hexenLinedefBlob(l.linedefs)) );
+		else newLumps.add(extractOrBlank(l, "LINEDEFS"));
+		
+		if( l.sidedefs != null ) newLumps.add( lump("SIDEDEFS",sidedefBlob(l.sidedefs)) );
+		else newLumps.add(extractOrBlank(l, "SIDEDEFS"));
+		
+		newLumps.add(extractOrBlank(l, "VERTEXES"));
+		newLumps.add(extractOrBlank(l, "SEGS"));
+		newLumps.add(extractOrBlank(l, "SSECTORS"));
+		newLumps.add(extractOrBlank(l, "NODES"));
+		newLumps.add(extractOrBlank(l, "SECTORS"));
+		newLumps.add(extractOrBlank(l, "REJECT"));
+		newLumps.add(extractOrBlank(l, "BLOCKMAP"));
+		newLumps.add(extractOrBlank(l, "BEHAVIOR"));
+		newLumps.add(extractOrBlank(l, "SCRIPTS"));
+		if( (u=l.getLump("ENDMAP")) != null ) newLumps.add(u);
+		
+		return newLumps;
 	}
 }

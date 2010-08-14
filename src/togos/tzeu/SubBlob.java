@@ -28,6 +28,8 @@ public class SubBlob implements Blob
 	}
 
 	public long writeTo(long blobOffset, OutputStream os, long length) throws IOException {
-		throw new RuntimeException("This not dfund");
+		if( length + blobOffset > this.length ) length = ByteUtil.integer(this.length - blobOffset);
+		if( length < 0 ) return 0;
+		return parent.writeTo(this.offset+blobOffset, os, length);
 	}
 }

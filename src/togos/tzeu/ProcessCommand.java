@@ -2,8 +2,10 @@ package togos.tzeu;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.List;
 
 public class ProcessCommand
 {
@@ -11,8 +13,9 @@ public class ProcessCommand
 	String mapname = null;
 	String outfilename = null;
 	
-	boolean preCompress = false;
-	boolean listPreCompress = false;
+	boolean compressSidedefs = false;
+	boolean preCompressSidedefs = false;
+	boolean listPreCompressSidedefs = false;
 	
 	public ProcessCommand( String[] args ) {
 		for( int i=0; i<args.length; ++i ) {
@@ -20,11 +23,13 @@ public class ProcessCommand
 				outfilename = args[++i];
 			} else if( "-map".equals(args[i]) ) {
 				mapname = args[++i];
+			} else if( "-compress-sidedefs".equals(args[i]) ) {
+				compressSidedefs = true;
 			} else if( "-pre-compress-sidedefs".equals(args[i]) ) {
-				preCompress = true;
+				preCompressSidedefs = true;
 			} else if( "-list-pre-compress-sidedefs".equals(args[i]) ) {
-				preCompress = true;
-				listPreCompress = true;
+				preCompressSidedefs = true;
+				listPreCompressSidedefs = true;
 			} else if( args[i].length() == 0 || args[i].charAt(0) != '-' ) {
 				infilename = args[i];
 			} else {
@@ -69,14 +74,14 @@ public class ProcessCommand
 			throw new RuntimeException(e);
 		}
 		
-		if( preCompress ) {
+		if( preCompressSidedefs ) {
 			SidedefCompressor sc = new SidedefCompressor();
 			SidedefCompressor.RemapResult pcr = sc.preCompress( l.sidedefs );
 			System.err.println("-- Sidedef pre-compression --");
 			System.err.println("Original     : "+l.sidedefs.size());
-			System.err.println("Comrpessed   : "+pcr.remappedItems.size());
+			System.err.println("Compressed   : "+pcr.remappedItems.size());
 			System.err.println("Would remove : "+(l.sidedefs.size()-pcr.remappedItems.size()));
-			if( listPreCompress ) {
+			if( listPreCompressSidedefs ) {
 				System.err.println("-- The following lines have compressable sidedefs --");
 				for( int i=0; i<l.linedefs.size(); ++i ) {
 					Linedef theline = (Linedef)l.linedefs.get(i);
@@ -85,6 +90,30 @@ public class ProcessCommand
 						System.err.println(i);
 					}
 				}
+			}
+		}
+		if( compressSidedefs ) {
+			SidedefCompressor sc = new SidedefCompressor();
+			SidedefCompressor.RemapResult pcr = sc.preCompress( l.sidedefs );
+			Level newLev = (Level)l.clone();
+			newLev.linedefs = sc.applyCompressionToLines(l.linedefs, pcr);
+			newLev.sidedefs = pcr.remappedItems;
+			System.err.println("-- Sidedef compression --");
+			System.err.println("Removed "+(l.sidedefs.size()-pcr.remappedItems.size())+" duplicate sidedefs.");
+			l = newLev;
+		}
+		
+		if( outfilename != null && l != null ) {
+			LevelWriter lw = new LevelWriter();
+			List levLumps = lw.lumpify(l);
+			try {
+				// todo: mkdirs?
+				FileOutputStream os = new FileOutputStream(outfilename);
+				WADWriter ww = new WADWriter();
+				ww.writeWad("PWAD", levLumps, os);
+				os.close();
+			} catch( IOException e ) {
+				throw new RuntimeException(e);
 			}
 		}
 		
