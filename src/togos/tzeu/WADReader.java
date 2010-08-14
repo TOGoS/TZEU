@@ -12,7 +12,7 @@ public class WADReader
 		wadBlob.read(deOffset, buf, 0, 16);
 		
 		Lump lump = new Lump();
-		lump.data = new SubBlob(wadBlob, ByteUtil.leInteger(buf,0), ByteUtil.leInteger(buf,4)); //not right!
+		lump.data = new SubBlob(wadBlob, ByteUtil.leInteger(buf,0), ByteUtil.leInteger(buf,4));
 		lump.name = ByteUtil.paddedString( buf, 8, 8 );
 		return lump;
 	}

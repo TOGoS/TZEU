@@ -55,7 +55,7 @@ public class WADReaderTest extends TestCase
 		for( int i=0; i<lumps.size(); ++i ) {
 			Lump l = (Lump)lumps.get(i);
 			if( lumpNames.length() > 0 ) lumpNames += ",";
-			lumpNames += l.getName() + "(" + l.getSize() + ")";
+			lumpNames += l.getName() + "(" + l.getLength() + ")";
 		}
 		assertEquals( "MAP30(0),THINGS(300),LINEDEFS(6160),SIDEDEFS(14700),VERTEXES(1284),SEGS(6864)," +
 				"SSECTORS(728),NODES(5068),SECTORS(1560),REJECT(0),BLOCKMAP(0)," +

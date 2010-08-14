@@ -5,6 +5,27 @@ import java.io.UnsupportedEncodingException;
 
 public class ByteUtil
 {
+	//// Encoding functions ////
+	
+	public static final void padString( String s, byte[] buf, int offset, int length ) {
+		int i;
+		for( i=0; i<length && i<s.length(); ++i ) {
+			buf[offset+i] = (byte)s.charAt(i);
+		}
+		for( ; i<length; ++i ) {
+			buf[offset+i] = 0;
+		}
+	}
+	
+	public static final void encodeInteger( int i, byte[] buf, int offset ) {
+		buf[offset+0] = (byte)(i >>  0);
+		buf[offset+1] = (byte)(i >>  8);
+		buf[offset+2] = (byte)(i >> 16);
+		buf[offset+3] = (byte)(i >> 24);
+	}
+	
+	//// Decoding functions ////
+	
 	public static final String paddedString( byte[] buf, int offset, int length ) {
 		for( int i=offset; i<offset+length; ++i ) {
 			if( buf[i] == 0 ) {
@@ -87,5 +108,15 @@ public class ByteUtil
 			((d[offset+0]&0xFF) <<  0) +
 			((d[offset+1]&0xFF) <<  8);
 		return (num == 0xFFFF) ? -1 : num;
+	}
+	
+	public static int compare( byte[] arr1, byte[] arr2 ) {
+		for( int i=0; i<arr1.length && i<arr2.length; ++i ) {
+			if( arr1[i] > arr2[i] ) return 1;
+			if( arr1[i] < arr2[i] ) return -1;
+		}
+		if( arr1.length > arr2.length ) return 1;
+		if( arr2.length > arr1.length ) return -1;
+		return 0;
 	}
 }
