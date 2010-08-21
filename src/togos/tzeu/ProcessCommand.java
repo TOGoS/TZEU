@@ -9,6 +9,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import togos.tzeu.io.LevelReader;
+import togos.tzeu.io.LevelWriter;
+import togos.tzeu.io.RandomAccessFileBlob;
+import togos.tzeu.io.WADReader;
+import togos.tzeu.io.WADWriter;
+import togos.tzeu.level.Level;
+
 public class ProcessCommand
 {
 	class ArgumentError extends RuntimeException {

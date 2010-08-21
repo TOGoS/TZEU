@@ -1,9 +1,17 @@
-package togos.tzeu;
+package togos.tzeu.io;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
+import togos.tzeu.Lump;
+import togos.tzeu.io.Blob;
+import togos.tzeu.io.LevelReader;
+import togos.tzeu.io.WADReader;
+import togos.tzeu.level.Level;
+import togos.tzeu.level.Linedef;
+import togos.tzeu.level.Sidedef;
 
 import junit.framework.TestCase;
 
@@ -90,6 +98,11 @@ public class WADReaderTest extends TestCase
 	 * Sidedef 98:
 	 *   up = BROWN1, normal = -, lower = BROWN1,
 	 *   xoffset = 91, yoffset = 64, sector = 11
+	 * Thing 5:
+	 *   type = 4002 (Player 6 start)
+	 *   facing = north (90)
+	 *   x,y,z = 320,32,0
+	 *    
 	 */
 
 	public void testReadLinedefs() throws IOException {

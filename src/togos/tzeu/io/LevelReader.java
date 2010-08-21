@@ -1,10 +1,15 @@
-package togos.tzeu;
+package togos.tzeu.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import togos.tzeu.Lump;
+import togos.tzeu.level.Level;
+import togos.tzeu.level.Linedef;
+import togos.tzeu.level.Sidedef;
 
 /**
  * For reading binary-format maps

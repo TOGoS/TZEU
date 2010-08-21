@@ -2,6 +2,8 @@ package togos.tzeu;
 
 import java.io.UnsupportedEncodingException;
 
+import togos.tzeu.io.ByteArrayBlob;
+
 import junit.framework.TestCase;
 
 public class LumpCompareTest extends TestCase

@@ -1,7 +1,8 @@
-package togos.tzeu;
+package togos.tzeu.level;
 
 public class Sidedef
 {
+	
 	public int xOffset = 0;
 	public int yOffset = 0;
 	public String upperTexture = "-";

@@ -2,6 +2,9 @@ package togos.tzeu;
 
 import java.io.IOException;
 
+import togos.tzeu.io.Blob;
+import togos.tzeu.io.ByteUtil;
+
 public class Lump
 {
 	public String name;

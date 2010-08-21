@@ -1,4 +1,4 @@
-package togos.tzeu;
+package togos.tzeu.io;
 
 import java.io.IOException;
 import java.io.OutputStream;

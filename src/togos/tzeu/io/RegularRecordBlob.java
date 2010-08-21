@@ -1,8 +1,9 @@
-package togos.tzeu;
+package togos.tzeu.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+
 
 public abstract class RegularRecordBlob implements Blob
 {

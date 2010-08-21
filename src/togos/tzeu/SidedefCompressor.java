@@ -6,6 +6,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import togos.tzeu.level.Level;
+import togos.tzeu.level.Linedef;
+import togos.tzeu.level.Sidedef;
+
 public class SidedefCompressor
 {
 	public class RemapResult {

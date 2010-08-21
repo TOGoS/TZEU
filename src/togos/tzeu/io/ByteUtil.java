@@ -1,7 +1,8 @@
-package togos.tzeu;
+package togos.tzeu.io;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
 
 public class ByteUtil
 {

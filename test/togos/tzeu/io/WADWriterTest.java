@@ -1,10 +1,12 @@
-package togos.tzeu;
+package togos.tzeu.io;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
+import togos.tzeu.Lump;
 
 import junit.framework.TestCase;
 

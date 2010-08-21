@@ -1,5 +1,7 @@
 package togos.tzeu;
 
+import togos.tzeu.io.WADReaderTest;
+import togos.tzeu.level.Level;
 import junit.framework.TestCase;
 
 public class SidedefCompressorTest extends TestCase

@@ -1,4 +1,4 @@
-package togos.tzeu;
+package togos.tzeu.level;
 
 public class Linedef implements Cloneable
 {
@@ -18,6 +18,8 @@ public class Linedef implements Cloneable
 	public static final int MAPPED          = 0x0100;
 	public static final int REPEAT_SPECIAL  = 0x0200;
 
+	// These will probably be changed
+	// to be implemented the same as the same flags in ZDoom
 	public static final int SPAC_Use   = 0x0400;
 	public static final int SPAC_MCross = 0x0800;
 	public static final int SPAC_Impact  = 0x0C00;

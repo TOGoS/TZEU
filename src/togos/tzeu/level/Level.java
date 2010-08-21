@@ -1,7 +1,9 @@
-package togos.tzeu;
+package togos.tzeu.level;
 
 import java.util.Iterator;
 import java.util.List;
+
+import togos.tzeu.Lump;
 
 public class Level implements Cloneable
 {

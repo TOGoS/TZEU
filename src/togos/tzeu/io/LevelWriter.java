@@ -1,7 +1,12 @@
-package togos.tzeu;
+package togos.tzeu.io;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import togos.tzeu.Lump;
+import togos.tzeu.level.Level;
+import togos.tzeu.level.Linedef;
+import togos.tzeu.level.Sidedef;
 
 public class LevelWriter
 {
