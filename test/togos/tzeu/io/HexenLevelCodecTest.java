@@ -30,4 +30,13 @@ public class HexenLevelCodecTest extends LevelCodecTest
 	protected Blob encodeSidedefs(List sidedefs) throws IOException {
 		return lw.sidedefBlob(sidedefs);
 	}
+	
+	//// Vertexes ////
+	
+	protected List decodeVertexes(Blob blob) throws IOException {
+		return lr.readVertexes(blob);
+	}
+	protected Blob encodeVertexes(List vertexes) throws IOException {
+		return lw.vertexBlob(vertexes);
+	}
 }

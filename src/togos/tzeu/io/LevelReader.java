@@ -10,6 +10,7 @@ import togos.tzeu.Lump;
 import togos.tzeu.level.Level;
 import togos.tzeu.level.Linedef;
 import togos.tzeu.level.Sidedef;
+import togos.tzeu.level.Vertex;
 
 /**
  * For reading binary-format maps
@@ -112,6 +113,28 @@ public class LevelReader
 		}
 		return sidedefs;
 	}
+	
+	//// Vertex ////
+	
+	public Vertex readVertex(Blob b, int offset) throws IOException {
+		byte[] dat = new byte[4];
+		b.read(offset, dat, 0, 4);
+		return new Vertex( ByteUtil.leShort(dat,0), ByteUtil.leShort(dat,2) );
+	}
+	
+	public List readVertexes( Blob b ) throws IOException {
+		int bloblen = ByteUtil.integer(b.getLength());
+		if( bloblen % 4 != 0 ) {
+			System.err.println("Warning: sidedef lump is not multiple of 4 bytes");
+		}
+		ArrayList vertexes = new ArrayList(bloblen/30);
+		for( int i=0; i<bloblen; i+=4 ) {
+			vertexes.add(readVertex(b, i));
+		}
+		return vertexes;
+	}
+	
+	//// Level ////
 	
 	public Level readLevel( List levelLumps ) throws IOException {
 		Level l = new Level();

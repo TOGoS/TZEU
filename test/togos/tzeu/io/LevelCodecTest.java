@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 
 import togos.tzeu.level.Linedef;
 import togos.tzeu.level.Sidedef;
+import togos.tzeu.level.Vertex;
 
 public abstract class LevelCodecTest extends TestCase
 {
@@ -60,19 +61,19 @@ public abstract class LevelCodecTest extends TestCase
 	}
 	
 	protected List randomLinedefs() {
-		List LinedefList = new ArrayList();
+		List linedefList = new ArrayList();
 		for( int i=0; i<300; ++i ) {
-			LinedefList.add(randomLinedef());
+			linedefList.add(randomLinedef());
 		}
-		return LinedefList;
+		return linedefList;
 	}
 	protected abstract Blob encodeLinedefs( List linedefs ) throws IOException;
 	protected abstract List decodeLinedefs( Blob blob ) throws IOException;
 	
 	public void testLinedefCodec() throws IOException {
 		List randomLinedefs = randomLinedefs();
-		Blob LinedefBlob = encodeLinedefs(randomLinedefs);
-		List loadedLinedefs = decodeLinedefs(LinedefBlob);
+		Blob linedefBlob = encodeLinedefs(randomLinedefs);
+		List loadedLinedefs = decodeLinedefs(linedefBlob);
 		assertEquals( randomLinedefs, loadedLinedefs );
 	}
 	
@@ -121,11 +122,11 @@ public abstract class LevelCodecTest extends TestCase
 
 	
 	protected List randomSidedefs() {
-		List SidedefList = new ArrayList();
+		List sidedefList = new ArrayList();
 		for( int i=0; i<300; ++i ) {
-			SidedefList.add(randomSidedef());
+			sidedefList.add(randomSidedef());
 		}
-		return SidedefList;
+		return sidedefList;
 	}
 	protected abstract Blob encodeSidedefs( List sidedefs ) throws IOException;
 	protected abstract List decodeSidedefs( Blob blob ) throws IOException;
@@ -136,4 +137,28 @@ public abstract class LevelCodecTest extends TestCase
 		List loadedSidedefs = decodeSidedefs(SidedefBlob);
 		assertEquals( randomSidedefs, loadedSidedefs );
 	}
+	
+	//// Vertexes ////
+	
+	protected Vertex randomVertex() {
+		return new Vertex( r.nextInt(0xfFFF)-0x8000, r.nextInt(0xFFFF)-0x8000 );
+	}
+
+	protected List randomVertexes() {
+		List vertexList = new ArrayList();
+		for( int i=0; i<300; ++i ) {
+			vertexList.add(randomVertex());
+		}
+		return vertexList;
+	}
+	protected abstract Blob encodeVertexes( List sidedefs ) throws IOException;
+	protected abstract List decodeVertexes( Blob blob ) throws IOException;
+	
+	public void testVertexCodec() throws IOException {
+		List randomVertexes = randomVertexes();
+		Blob VertexBlob = encodeVertexes(randomVertexes);
+		List loadedVertexes = decodeVertexes(VertexBlob);
+		assertEquals( randomVertexes, loadedVertexes );
+	}
+	
 }
