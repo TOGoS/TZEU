@@ -10,6 +10,8 @@ import togos.tzeu.Lump;
 import togos.tzeu.level.Level;
 import togos.tzeu.level.Linedef;
 import togos.tzeu.level.Sidedef;
+import togos.tzeu.level.Special;
+import togos.tzeu.level.Thing;
 import togos.tzeu.level.Vertex;
 
 /**
@@ -54,6 +56,46 @@ public class LevelReader
 		return null;
 	}
 	
+	protected Special readSpecial( byte[] buf, int offset ) {
+		Special s = new Special();
+		s.specialNumber = ByteUtil.leUByte(  buf, offset+0 );
+		s.arg0          = ByteUtil.leUByte(  buf, offset+1 );
+		s.arg1          = ByteUtil.leUByte(  buf, offset+2 );
+		s.arg2          = ByteUtil.leUByte(  buf, offset+3 );
+		s.arg3          = ByteUtil.leUByte(  buf, offset+4 );
+		s.arg4          = ByteUtil.leUByte(  buf, offset+5 );
+		return Special.internIfZero(s);
+	}
+	
+	//// Things ////
+	
+	public Thing readHexenThing( Blob b, int offset ) throws IOException {
+		byte[] buf = new byte[20];
+		b.read( offset, buf, 0, 20 );
+		Thing t = new Thing();
+		t.thingId = ByteUtil.leShort( buf,  0 );
+		t.x      = ByteUtil.leShort( buf,  2 );
+		t.y      = ByteUtil.leShort( buf,  4 );
+		t.height  = ByteUtil.leShort( buf,  6 );
+		t.angle    = ByteUtil.leShort( buf,  8 );
+		t.doomEdNum = ByteUtil.leUShort( buf, 10 );
+		t.flags     = ByteUtil.leUShort( buf, 12 );
+		t.special  = readSpecial( buf, 14 );
+		return t;
+	}
+	
+	public List readHexenThings( Blob b ) throws IOException {
+		int bloblen = ByteUtil.integer(b.getLength());
+		if( bloblen % 20 != 0 ) {
+			System.err.println("Warning: hexen thing lump is not multiple of 20 bytes");
+		}
+		ArrayList things = new ArrayList(bloblen/16);
+		for( int i=0; i<bloblen; i+=20 ) {
+			things.add(readHexenThing(b, i));
+		}
+		return things;
+	}
+	
 	//// Linedefs ////
 	
 	public Linedef readHexenLinedef( Blob b, int offset ) throws IOException {
@@ -64,12 +106,7 @@ public class LevelReader
 		l.vertex2Index  = ByteUtil.leUShort( buf,  2 );
 		l.flags         = ByteUtil.leUShort( buf,  4 ) & Linedef.HEXEN_FLAG_MASK;
 		l.trigger       = ByteUtil.leUShort( buf,  4 ) & Linedef.HEXEN_TRIGGER_MASK;
-		l.special       = ByteUtil.leUByte(  buf,  6 );
-		l.arg1          = ByteUtil.leUByte(  buf,  7 );
-		l.arg2          = ByteUtil.leUByte(  buf,  8 );
-		l.arg3          = ByteUtil.leUByte(  buf,  9 );
-		l.arg4          = ByteUtil.leUByte(  buf, 10 );
-		l.arg5          = ByteUtil.leUByte(  buf, 11 );
+		l.special       = readSpecial( buf, 6 );
 		l.sidedef1Index = ByteUtil.leShortSidedefIndex( buf, 12 );
 		l.sidedef2Index = ByteUtil.leShortSidedefIndex( buf, 14 );
 		return l;

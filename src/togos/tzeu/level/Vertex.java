@@ -15,8 +15,8 @@ public final class Vertex
 	protected final int getCx() {  return (int)(x*0x1000);  }
 	protected final int getCy() {  return (int)(y*0x1000);  }
 	
-	public final int getIx() {  return (int)x;  }
-	public final int getIy() {  return (int)y;  }
+	public final float getX() {  return x;  }
+	public final float getY() {  return y;  }
 
 	public Object clone() {
 		try {

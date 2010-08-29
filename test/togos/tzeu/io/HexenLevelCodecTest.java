@@ -13,6 +13,15 @@ public class HexenLevelCodecTest extends LevelCodecTest
 		lr = new LevelReader();
 	}
 
+	//// Things ////
+	
+	protected Blob encodeThings( List things ) throws IOException {
+		return lw.hexenThingBlob(things);
+	}
+	protected List decodeThings( Blob blob ) throws IOException {
+		return lr.readHexenThings(blob);
+	}
+	
 	//// Linedefs ////
 	
 	protected Blob encodeLinedefs(List lines) throws IOException {

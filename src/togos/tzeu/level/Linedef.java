@@ -1,5 +1,6 @@
 package togos.tzeu.level;
 
+
 public class Linedef implements Cloneable
 {
 	/**
@@ -35,12 +36,12 @@ public class Linedef implements Cloneable
 	public static final int HEXEN_FLAG_MASK = 0xE3FF;
 	public static final int HEXEN_TRIGGER_MASK = ~HEXEN_FLAG_MASK & 0xFFFF;
 	
+	public int id;
 	public int vertex1Index;
 	public int vertex2Index;
 	public int flags;
 	public int trigger;
-	public int special=0;
-	public int arg1=0,arg2=0,arg3=0,arg4=0,arg5=0;
+	public Special special = Special.ZERO;
 	public int sidedef1Index=-1,sidedef2Index=-1;
 	
 	public Object clone() {
@@ -59,12 +60,7 @@ public class Linedef implements Cloneable
 				ol.vertex2Index == vertex2Index &&
 				ol.flags == flags &&
 				ol.trigger == trigger &&
-				ol.special == special &&
-				ol.arg1 == arg1 &&
-				ol.arg2 == arg2 &&
-				ol.arg3 == arg3 &&
-				ol.arg4 == arg4 &&
-				ol.arg5 == arg5 &&
+				ol.special.equals(special) &&
 				ol.sidedef1Index == sidedef1Index &&
 				ol.sidedef2Index == sidedef2Index;
 		}
@@ -74,7 +70,7 @@ public class Linedef implements Cloneable
 	public int hashCode() {
 		return
 			vertex1Index ^ vertex2Index ^ flags ^ trigger ^
-			special ^ arg1 ^ arg2 ^ arg3 ^ arg4 ^ arg5 ^
+			special.hashCode() ^
 			sidedef1Index ^ sidedef2Index;
 	}
 }

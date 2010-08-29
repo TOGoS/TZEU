@@ -12,6 +12,8 @@ import togos.tzeu.io.WADReader;
 import togos.tzeu.level.Level;
 import togos.tzeu.level.Linedef;
 import togos.tzeu.level.Sidedef;
+import togos.tzeu.level.Thing;
+import togos.tzeu.level.Vertex;
 
 import junit.framework.TestCase;
 
@@ -104,7 +106,29 @@ public class WADReaderTest extends TestCase
 	 *   x,y,z = 320,32,0
 	 *    
 	 */
-
+	
+	public void testReadThings() throws IOException {
+		Lump thingLump = wr.findLump( getLumps(), "THINGS", "MAP30" );
+		List things = lr.readHexenThings(thingLump.getData());
+		assertEquals( 15, things.size() );
+		Thing t = (Thing)things.get(5);
+		assertEquals( 4002, (int)t.doomEdNum );
+		assertEquals( 320, (int)t.x );
+		assertEquals( 32, (int)t.y );
+		assertEquals( 0, (int)t.height );
+		assertEquals( 90, t.angle );
+		assertTrue( t.special.isZero() );
+	}
+	
+	public void testReadVertexes() throws IOException {
+		Lump vertexLump = wr.findLump( getLumps(), "VERTEXES", "MAP30" );
+		List vertexes = lr.readVertexes(vertexLump.getData());
+		assertEquals( 321, vertexes.size() );
+		Vertex v = (Vertex)vertexes.get(254);
+		assertEquals( 288, (int)v.getX() );
+		assertEquals( -224, (int)v.getY() );
+	}
+	
 	public void testReadLinedefs() throws IOException {
 		List lumps = getLumps();
 		
@@ -121,14 +145,15 @@ public class WADReaderTest extends TestCase
 		Linedef testLinedef = (Linedef)linedefs.get(290);
 		assertEquals( 239, testLinedef.vertex1Index );
 		assertEquals( 242, testLinedef.vertex2Index );
-		assertEquals( 206, testLinedef.special );
 		assertEquals( eflags, testLinedef.flags );
 		assertEquals( Linedef.SPAC_Use, testLinedef.trigger );
-		assertEquals(   0, testLinedef.arg1 );
-		assertEquals(  16, testLinedef.arg2 );
-		assertEquals(  50, testLinedef.arg3 );
-		assertEquals(   8, testLinedef.arg4 );
-		assertEquals(   0, testLinedef.arg5 );
+		assertNotNull( testLinedef.special );
+		assertEquals( 206, testLinedef.special.specialNumber );
+		assertEquals(   0, testLinedef.special.arg0 );
+		assertEquals(  16, testLinedef.special.arg1 );
+		assertEquals(  50, testLinedef.special.arg2 );
+		assertEquals(   8, testLinedef.special.arg3 );
+		assertEquals(   0, testLinedef.special.arg4 );
 		assertEquals( 379, testLinedef.sidedef1Index );
 		assertEquals( 373, testLinedef.sidedef2Index );
 	}
