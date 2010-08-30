@@ -11,6 +11,7 @@ import togos.tzeu.io.LevelReader;
 import togos.tzeu.io.WADReader;
 import togos.tzeu.level.Level;
 import togos.tzeu.level.Linedef;
+import togos.tzeu.level.Sector;
 import togos.tzeu.level.Sidedef;
 import togos.tzeu.level.Thing;
 import togos.tzeu.level.Vertex;
@@ -104,12 +105,17 @@ public class WADReaderTest extends TestCase
 	 *   type = 4002 (Player 6 start)
 	 *   facing = north (90)
 	 *   x,y,z = 320,32,0
-	 *    
+	 * Sector 43:
+	 *   -40 to 104
+	 *   STEP1, TLITE6_4
+	 *   light = 160
+	 *   tag = 2
+	 *   special = 0
 	 */
 	
 	public void testReadThings() throws IOException {
 		Lump thingLump = wr.findLump( getLumps(), "THINGS", "MAP30" );
-		List things = lr.readHexenThings(thingLump.getData());
+		List things = HexenThingCodec.instance.decodeItems(thingLump.getData());
 		assertEquals( 15, things.size() );
 		Thing t = (Thing)things.get(5);
 		assertEquals( 4002, (int)t.doomEdNum );
@@ -118,15 +124,6 @@ public class WADReaderTest extends TestCase
 		assertEquals( 0, (int)t.height );
 		assertEquals( 90, t.angle );
 		assertTrue( t.special.isZero() );
-	}
-	
-	public void testReadVertexes() throws IOException {
-		Lump vertexLump = wr.findLump( getLumps(), "VERTEXES", "MAP30" );
-		List vertexes = lr.readVertexes(vertexLump.getData());
-		assertEquals( 321, vertexes.size() );
-		Vertex v = (Vertex)vertexes.get(254);
-		assertEquals( 288, (int)v.getX() );
-		assertEquals( -224, (int)v.getY() );
 	}
 	
 	public void testReadLinedefs() throws IOException {
@@ -171,6 +168,29 @@ public class WADReaderTest extends TestCase
 		assertEquals( "BROWN1", testSidedef.upperTexture );
 		assertEquals( "BROWN1", testSidedef.lowerTexture );
 		assertEquals( "-",      testSidedef.normalTexture );
+	}
+	
+	public void testReadVertexes() throws IOException {
+		Lump vertexLump = wr.findLump( getLumps(), "VERTEXES", "MAP30" );
+		List vertexes = lr.readVertexes(vertexLump.getData());
+		assertEquals( 321, vertexes.size() );
+		Vertex v = (Vertex)vertexes.get(254);
+		assertEquals( 288, (int)v.getX() );
+		assertEquals( -224, (int)v.getY() );
+	}
+	
+	public void testReadSectors() throws IOException {
+		Lump thingLump = wr.findLump( getLumps(), "SECTORS", "MAP30" );
+		List sectors = DoomSectorCodec.instance.decodeItems(thingLump.getData());
+		assertEquals( 60, sectors.size() );
+		Sector s = (Sector)sectors.get(43);
+		assertEquals( -40, s.floorHeight );
+		assertEquals( 104, s.ceilingHeight );
+		assertEquals( "STEP1", s.floorTexture );
+		assertEquals( "TLITE6_4", s.ceilingTexture );
+		assertEquals( 2, s.sectorTag );
+		assertEquals( 160, s.lightLevel );
+		assertEquals( 0, s.sectorSpecialNumber );
 	}
 	
 	public void testReadLevelLumps() {

@@ -7,6 +7,7 @@ import java.util.Random;
 
 import junit.framework.TestCase;
 import togos.tzeu.level.Linedef;
+import togos.tzeu.level.Sector;
 import togos.tzeu.level.Sidedef;
 import togos.tzeu.level.Special;
 import togos.tzeu.level.Thing;
@@ -19,7 +20,21 @@ public abstract class LevelCodecTest extends TestCase
 		 r = new Random();
 	}
 	
-	protected Special randSpecial() {
+	public void testCodec( ItemListCodec ilc, List items ) throws IOException {
+		Blob encodedItems = ilc.encodeItems(items);
+		List decodedItems = ilc.decodeItems(encodedItems);
+		//assertEquals( items, decodedItems );
+		
+		assertEquals( items.size(), decodedItems.size() );
+		for( int i=0; i<items.size(); ++i ) {
+			if( !items.get(i).equals(decodedItems.get(i)) ) {
+				assertEquals( items.get(i), decodedItems.get(i) );
+			}
+		}
+		
+	}
+	
+	protected Special randomSpecial() {
 		if( r.nextBoolean() ) return Special.ZERO;
 		
 		Special s = new Special();
@@ -32,15 +47,23 @@ public abstract class LevelCodecTest extends TestCase
 		return s;
 	}
 	
+	protected int randomShort() {
+		return r.nextInt(0xfFFF)-0x8000;
+	}
+	
+	protected int randomUShort() {
+		return r.nextInt(0x10000);
+	}
+	
 	//// Things ////
 	
 	protected Thing randomThing() {
 		Thing t = new Thing();
-		t.x = r.nextInt(0xfFFF)-0x8000;
-		t.y = r.nextInt(0xfFFF)-0x8000;
-		t.height = r.nextInt(0xfFFF)-0x8000;
-		t.flags = r.nextInt(0x10000);
-		t.special = randSpecial();
+		t.x = randomShort();
+		t.y = randomShort();
+		t.height = randomShort();
+		t.flags = randomUShort();
+		t.special = randomSpecial();
 		return t;
 	}
 	protected List randomThings() {
@@ -49,15 +72,6 @@ public abstract class LevelCodecTest extends TestCase
 			thingList.add(randomThing());
 		}
 		return thingList;
-	}
-	protected abstract Blob encodeThings( List things ) throws IOException;
-	protected abstract List decodeThings( Blob blob ) throws IOException;
-	
-	public void testThingCodec() throws IOException {
-		List randomThings = randomThings();
-		Blob thingBlob = encodeThings(randomThings);
-		List loadedThings = decodeThings(thingBlob);
-		assertEquals( randomThings, loadedThings );
 	}
 	
 	//// Linedefs ////
@@ -85,7 +99,7 @@ public abstract class LevelCodecTest extends TestCase
 		l.vertex2Index = randLinedefVertexIndex();
 		l.flags = randLinedefFlags();
 		l.trigger = randLinedefTrigger();
-		l.special = randSpecial();
+		l.special = randomSpecial();
 		l.sidedef1Index = randLinedefSidedefIndex();
 		l.sidedef2Index = randLinedefSidedefIndex();
 		return l;
@@ -177,7 +191,7 @@ public abstract class LevelCodecTest extends TestCase
 
 	protected List randomVertexes() {
 		List vertexList = new ArrayList();
-		for( int i=0; i<300; ++i ) {
+		for( int i=0; i<1000; ++i ) {
 			vertexList.add(randomVertex());
 		}
 		return vertexList;
@@ -192,4 +206,25 @@ public abstract class LevelCodecTest extends TestCase
 		assertEquals( randomVertexes, loadedVertexes );
 	}
 	
+	//// Sectors ////
+	
+	protected Sector randomSector() {
+		Sector s = new Sector();
+		s.floorHeight = randomShort();
+		s.ceilingHeight = randomShort();
+		s.floorTexture = randomTexture();
+		s.ceilingTexture = randomTexture();
+		s.lightLevel = r.nextInt(0x100);
+		s.sectorSpecialNumber = randomUShort();
+		s.sectorTag = randomUShort();
+		return s;
+	}
+	
+	protected List randomSectors() {
+		List vertexList = new ArrayList();
+		for( int i=0; i<1000; ++i ) {
+			vertexList.add(randomSector());
+		}
+		return vertexList;
+	}
 }

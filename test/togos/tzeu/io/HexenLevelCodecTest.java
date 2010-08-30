@@ -12,14 +12,11 @@ public class HexenLevelCodecTest extends LevelCodecTest
 		lw = new LevelWriter();
 		lr = new LevelReader();
 	}
-
-	//// Things ////
 	
-	protected Blob encodeThings( List things ) throws IOException {
-		return lw.hexenThingBlob(things);
-	}
-	protected List decodeThings( Blob blob ) throws IOException {
-		return lr.readHexenThings(blob);
+	//// Things ////
+
+	public void testHexenThingCodec() throws IOException {
+		testCodec( HexenThingCodec.instance, randomThings() );
 	}
 	
 	//// Linedefs ////
@@ -47,5 +44,11 @@ public class HexenLevelCodecTest extends LevelCodecTest
 	}
 	protected Blob encodeVertexes(List vertexes) throws IOException {
 		return lw.vertexBlob(vertexes);
+	}
+	
+	//// Sectors ////
+
+	public void testSectorCodec() throws IOException {
+		testCodec( DoomSectorCodec.instance, randomSectors() );
 	}
 }
