@@ -6,6 +6,8 @@ import java.io.OutputStream;
 
 public class ByteArrayBlob implements Blob
 {
+	public static ByteArrayBlob EMPTY = new ByteArrayBlob(new byte[0]);
+	
 	byte[] data;
 	int offset;
 	int length;

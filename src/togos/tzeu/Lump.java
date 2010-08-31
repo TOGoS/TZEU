@@ -3,12 +3,23 @@ package togos.tzeu;
 import java.io.IOException;
 
 import togos.tzeu.io.Blob;
+import togos.tzeu.io.ByteArrayBlob;
 import togos.tzeu.io.ByteUtil;
 
 public class Lump
 {
 	public String name;
 	public Blob data;
+	
+	public Lump() { }
+	public Lump(String name, Blob data) {
+		this.name = name;
+		this.data = data;
+	}
+	
+	public static Lump blankLump(String name) {
+		return new Lump(name, ByteArrayBlob.EMPTY);
+	}
 	
 	public String getName() {
 		return name;

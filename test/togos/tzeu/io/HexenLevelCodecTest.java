@@ -1,7 +1,6 @@
 package togos.tzeu.io;
 
 import java.io.IOException;
-import java.util.List;
 
 public class HexenLevelCodecTest extends LevelCodecTest
 {
@@ -20,30 +19,21 @@ public class HexenLevelCodecTest extends LevelCodecTest
 	}
 	
 	//// Linedefs ////
-	
-	protected Blob encodeLinedefs(List lines) throws IOException {
-		return lw.hexenLinedefBlob(lines);
-	}
-	protected List decodeLinedefs(Blob blob) throws IOException {
-		return lr.readHexenLinedefs(blob);
+
+	public void testLinedefCodec() throws IOException {
+		testCodec( HexenLinedefCodec.instance, randomLinedefs() );
 	}
 	
 	//// Sidedefs ////
 	
-	protected List decodeSidedefs(Blob blob) throws IOException {
-		return lr.readSidedefs(blob);
-	}
-	protected Blob encodeSidedefs(List sidedefs) throws IOException {
-		return lw.sidedefBlob(sidedefs);
+	public void testSidedefCodec() throws IOException {
+		testCodec( DoomSidedefCodec.instance, randomSidedefs() );
 	}
 	
 	//// Vertexes ////
 	
-	protected List decodeVertexes(Blob blob) throws IOException {
-		return lr.readVertexes(blob);
-	}
-	protected Blob encodeVertexes(List vertexes) throws IOException {
-		return lw.vertexBlob(vertexes);
+	public void testVertexCodec() throws IOException {
+		testCodec( DoomVertexCodec.instance, randomVertexes() );
 	}
 	
 	//// Sectors ////

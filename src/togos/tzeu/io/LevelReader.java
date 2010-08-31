@@ -2,15 +2,14 @@ package togos.tzeu.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import togos.tzeu.Lump;
 import togos.tzeu.level.Level;
-import togos.tzeu.level.Linedef;
-import togos.tzeu.level.Sidedef;
-import togos.tzeu.level.Vertex;
 
 public class LevelReader
 {
@@ -51,97 +50,87 @@ public class LevelReader
 		return null;
 	}
 	
-	//// Linedefs ////
-	
-	public Linedef readHexenLinedef( Blob b, int offset ) throws IOException {
-		byte[] buf = new byte[16];
-		b.read( offset, buf, 0, 16 );
-		Linedef l = new Linedef();
-		l.vertex1Index  = ByteUtil.leUShort( buf,  0 );
-		l.vertex2Index  = ByteUtil.leUShort( buf,  2 );
-		l.flags         = ByteUtil.leUShort( buf,  4 ) & Linedef.HEXEN_FLAG_MASK;
-		l.trigger       = ByteUtil.leUShort( buf,  4 ) & Linedef.HEXEN_TRIGGER_MASK;
-		l.special       = HexenSpecialCodec.instance.decodeSpecial( buf, 6 );
-		l.sidedef1Index = ByteUtil.leShortSidedefIndex( buf, 12 );
-		l.sidedef2Index = ByteUtil.leShortSidedefIndex( buf, 14 );
-		return l;
-	}
-	
-	public List readHexenLinedefs( Blob b ) throws IOException {
-		int bloblen = ByteUtil.integer(b.getLength());
-		if( bloblen % 16 != 0 ) {
-			System.err.println("Warning: hexen linedef lump is not multiple of 16 bytes");
-		}
-		ArrayList linedefs = new ArrayList(bloblen/16);
-		for( int i=0; i<bloblen; i+=16 ) {
-			linedefs.add(readHexenLinedef(b, i));
-		}
-		return linedefs;
-	}
-	
-	//// Sidedefs ////
-	
-	public Sidedef readSidedef( Blob b, int offset ) throws IOException {
-		byte[] buf = new byte[30];
-		b.read( offset, buf, 0, 30 );
-		Sidedef s = new Sidedef();
-		s.xOffset       = ByteUtil.leShort( buf, 0 );
-		s.yOffset       = ByteUtil.leShort( buf, 2 );
-		s.upperTexture  = ByteUtil.paddedString( buf,  4, 8 );
-		s.lowerTexture  = ByteUtil.paddedString( buf, 12, 8 );
-		s.normalTexture = ByteUtil.paddedString( buf, 20, 8 );
-		s.sectorIndex   = ByteUtil.leUShort( buf, 28 );
-		return s;
-	}
-	
-	public List readSidedefs( Blob b ) throws IOException {
-		int bloblen = ByteUtil.integer(b.getLength());
-		if( bloblen % 30 != 0 ) {
-			System.err.println("Warning: sidedef lump is not multiple of 30 bytes");
-		}
-		ArrayList sidedefs = new ArrayList(bloblen/30);
-		for( int i=0; i<bloblen; i+=30 ) {
-			sidedefs.add(readSidedef(b, i));
-		}
-		return sidedefs;
-	}
-	
-	//// Vertex ////
-	
-	public Vertex readVertex(Blob b, int offset) throws IOException {
-		byte[] dat = new byte[4];
-		b.read(offset, dat, 0, 4);
-		return new Vertex( ByteUtil.leShort(dat,0), ByteUtil.leShort(dat,2) );
-	}
-	
-	public List readVertexes( Blob b ) throws IOException {
-		int bloblen = ByteUtil.integer(b.getLength());
-		if( bloblen % 4 != 0 ) {
-			System.err.println("Warning: sidedef lump is not multiple of 4 bytes");
-		}
-		ArrayList vertexes = new ArrayList(bloblen/30);
-		for( int i=0; i<bloblen; i+=4 ) {
-			vertexes.add(readVertex(b, i));
-		}
-		return vertexes;
-	}
-	
 	//// Level ////
 	
-	public Level readLevel( List levelLumps ) throws IOException {
+	public static final int PARSE_THINGS   = 0x001;
+	public static final int PARSE_LINEDEFS = 0x002;
+	public static final int PARSE_SIDEDEFS = 0x004;
+	public static final int PARSE_VERTEXES = 0x008;
+	public static final int PARSE_SECTORS  = 0x010;
+	public static final int PARSE_ALL      = 0x01F;
+	public static final int SAVE_UNPARSED_LUMPS = 0x100;
+	public static final int COPY_LUMPS          = 0x200;
+	
+	public static Map lumpCodecs = new HashMap();
+	public static Map lumpParseFlags = new HashMap();
+	static {
+		lumpCodecs.put("THINGS", HexenThingCodec.instance);
+		lumpCodecs.put("LINEDEFS", HexenLinedefCodec.instance);
+		lumpCodecs.put("SIDEDEFS", DoomSidedefCodec.instance);
+		lumpCodecs.put("VERTEXES", DoomVertexCodec.instance);
+		lumpCodecs.put("SECTORS", DoomSectorCodec.instance);
+	}
+	
+	protected Blob memoryBlob( Blob b ) throws IOException {
+		if( b instanceof ByteArrayBlob ) return b;
+		byte[] buf = new byte[ByteUtil.integer(b.getLength())];
+		b.read(0, buf, 0, buf.length);
+		return new ByteArrayBlob( buf );
+	}
+	public Lump blankLump(String name) {
+		return new Lump(name, new ByteArrayBlob(new byte[0]));
+	}
+	protected List parseItems( Level l, String lumpName, int parseFlag, int flags, List destLumps )
+		throws IOException
+	{
+		List items = null;
+		Lump lump = l.getLump(lumpName);
+		ItemListCodec ilc = (ItemListCodec)lumpCodecs.get(lumpName);
+		if( lump != null && ilc != null && (parseFlag&flags) != 0 ) {
+			items = ilc.decodeItems( lump.getData() );
+		}
+		if( items == null && (flags&SAVE_UNPARSED_LUMPS) != 0 ) {
+			if( lump == null ) lump = blankLump(lumpName);
+			destLumps.add(lump);
+		}
+		return items;
+	}
+	
+	protected void mbcplmp( Level l, String lumpName, int flags, List destLumps ) {
+		Lump lump = l.getLump(lumpName);
+		if( (flags&SAVE_UNPARSED_LUMPS) != 0 ) {
+			if( lump == null ) lump = blankLump(lumpName);
+			destLumps.add(lump);
+		}
+	}
+	
+	public Level readLevel( List levelLumps, int flags ) throws IOException {
 		Level l = new Level();
 		l.lumps = levelLumps;
-		l.linedefs = readHexenLinedefs(l.getLump("LINEDEFS").getData());
-		l.sidedefs = readSidedefs(l.getLump("SIDEDEFS").getData());
+		List savedLumps = new ArrayList();
+		savedLumps.add( levelLumps.get(0) );
+		l.things   = parseItems(l,"THINGS"  ,PARSE_THINGS  ,flags,savedLumps);
+		l.linedefs = parseItems(l,"LINEDEFS",PARSE_LINEDEFS,flags,savedLumps);
+		l.sidedefs = parseItems(l,"SIDEDEFS",PARSE_SIDEDEFS,flags,savedLumps);
+		l.vertexes = parseItems(l,"VERTEXES",PARSE_VERTEXES,flags,savedLumps);
+		mbcplmp(l,"SEGS",flags,savedLumps);
+		mbcplmp(l,"SSECTORS",flags,savedLumps);
+		mbcplmp(l,"NODES",flags,savedLumps);
+		l.sectors  = parseItems(l,"SECTORS" ,PARSE_SECTORS ,flags,savedLumps);
+		mbcplmp(l,"REJECT",flags,savedLumps);
+		mbcplmp(l,"BLOCKMAP",flags,savedLumps);
+		mbcplmp(l,"BEHAVIOR",flags,savedLumps);
+		mbcplmp(l,"SCRIPTS",flags,savedLumps);
+		l.lumps = savedLumps;
 		return l;
 	}
 
-	public Level readLevel( List lumps, String levelName ) throws IOException {
-		return readLevel( readLevelLumps(lumps, levelName) );
+	public Level readLevel( List lumps, String levelName, int flags ) throws IOException {
+		return readLevel( readLevelLumps(lumps, levelName), flags );
 	}
 	
-	public Level readLevel( Blob wadBlob, String levelName ) throws IOException {
+	public Level readLevel( Blob wadBlob, String levelName, int flags ) throws IOException {
 		WADReader wr = new WADReader();
-		return readLevel( wr.readLumps(wadBlob), levelName );
+		return readLevel( wr.readLumps(wadBlob), levelName, flags );
 	}
 }

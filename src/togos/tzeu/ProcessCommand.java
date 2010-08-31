@@ -42,7 +42,7 @@ public class ProcessCommand
 			try {
 				List lumps = (List)input;
 				LevelReader lr = new LevelReader();
-				return lr.readLevel(lumps, mapname);
+				return lr.readLevel(lumps, mapname, LevelReader.PARSE_ALL|LevelReader.SAVE_UNPARSED_LUMPS);
 			} catch( IOException e ) {
 				throw new RuntimeException(e);
 			}

@@ -112,15 +112,6 @@ public abstract class LevelCodecTest extends TestCase
 		}
 		return linedefList;
 	}
-	protected abstract Blob encodeLinedefs( List linedefs ) throws IOException;
-	protected abstract List decodeLinedefs( Blob blob ) throws IOException;
-	
-	public void testLinedefCodec() throws IOException {
-		List randomLinedefs = randomLinedefs();
-		Blob linedefBlob = encodeLinedefs(randomLinedefs);
-		List loadedLinedefs = decodeLinedefs(linedefBlob);
-		assertEquals( randomLinedefs, loadedLinedefs );
-	}
 	
 	//// Sidedefs ////
 	
@@ -164,7 +155,6 @@ public abstract class LevelCodecTest extends TestCase
 		s.sectorIndex = randomSidedefSectorIndex();
 		return s;
 	}
-
 	
 	protected List randomSidedefs() {
 		List sidedefList = new ArrayList();
@@ -172,15 +162,6 @@ public abstract class LevelCodecTest extends TestCase
 			sidedefList.add(randomSidedef());
 		}
 		return sidedefList;
-	}
-	protected abstract Blob encodeSidedefs( List sidedefs ) throws IOException;
-	protected abstract List decodeSidedefs( Blob blob ) throws IOException;
-	
-	public void testSidedefCodec() throws IOException {
-		List randomSidedefs = randomSidedefs();
-		Blob SidedefBlob = encodeSidedefs(randomSidedefs);
-		List loadedSidedefs = decodeSidedefs(SidedefBlob);
-		assertEquals( randomSidedefs, loadedSidedefs );
 	}
 	
 	//// Vertexes ////
@@ -195,15 +176,6 @@ public abstract class LevelCodecTest extends TestCase
 			vertexList.add(randomVertex());
 		}
 		return vertexList;
-	}
-	protected abstract Blob encodeVertexes( List sidedefs ) throws IOException;
-	protected abstract List decodeVertexes( Blob blob ) throws IOException;
-	
-	public void testVertexCodec() throws IOException {
-		List randomVertexes = randomVertexes();
-		Blob VertexBlob = encodeVertexes(randomVertexes);
-		List loadedVertexes = decodeVertexes(VertexBlob);
-		assertEquals( randomVertexes, loadedVertexes );
 	}
 	
 	//// Sectors ////

@@ -1,13 +1,13 @@
 package togos.tzeu;
 
-import togos.tzeu.io.WADReaderTest;
-import togos.tzeu.level.Level;
 import junit.framework.TestCase;
+import togos.tzeu.io.LevelReaderTest;
+import togos.tzeu.level.Level;
 
 public class SidedefCompressorTest extends TestCase
 {
 	public void testCompressLevel() {
-		Level l = WADReaderTest.getLevel();
+		Level l = LevelReaderTest.getLevel();
 		SidedefCompressor sc = new SidedefCompressor();
 		
 		Level cl = sc.compress(l);
