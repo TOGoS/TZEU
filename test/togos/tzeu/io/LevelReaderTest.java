@@ -184,6 +184,7 @@ public class LevelReaderTest extends TestCase
 
 	public void testReadLevel() {
 		Level lev = getLevel( LevelReader.PARSE_ALL|LevelReader.SAVE_UNPARSED_LUMPS );
+		assertEquals( "MAP30", lev.name );
 		testThings( lev.things );
 		testLinedefs( lev.linedefs );
 		testSidedefs( lev.sidedefs );
@@ -203,12 +204,12 @@ public class LevelReaderTest extends TestCase
 	
 	public void testReadLevelPartially() {
 		Level lev = getLevel( LevelReader.PARSE_LINEDEFS|LevelReader.PARSE_VERTEXES );
+		assertEquals( "MAP30", lev.name );
 		assertNotNull( lev.linedefs );
 		assertNotNull( lev.vertexes );
 		assertNull( lev.sidedefs );
 		assertNull( lev.sectors );
 		assertNull( lev.things );
-		// The header lump will always be in there...
-		assertEquals( 1, lev.lumps.size() );
+		assertEquals( 0, lev.lumps.size() );
 	}
 }

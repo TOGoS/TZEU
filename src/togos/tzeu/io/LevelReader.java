@@ -106,9 +106,10 @@ public class LevelReader
 	
 	public Level readLevel( List levelLumps, int flags ) throws IOException {
 		Level l = new Level();
-		l.lumps = levelLumps;
+		l.lumps = levelLumps; // So we can use l.getLump, which is dumb ;p
+		l.name = ((Lump)levelLumps.get(0)).name;
 		List savedLumps = new ArrayList();
-		savedLumps.add( levelLumps.get(0) );
+		if( (flags&SAVE_UNPARSED_LUMPS) != 0 ) savedLumps.add( levelLumps.get(0) );
 		l.things   = parseItems(l,"THINGS"  ,PARSE_THINGS  ,flags,savedLumps);
 		l.linedefs = parseItems(l,"LINEDEFS",PARSE_LINEDEFS,flags,savedLumps);
 		l.sidedefs = parseItems(l,"SIDEDEFS",PARSE_SIDEDEFS,flags,savedLumps);

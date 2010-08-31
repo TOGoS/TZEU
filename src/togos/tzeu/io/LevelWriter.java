@@ -32,8 +32,7 @@ public class LevelWriter
 		List newLumps = new ArrayList();
 		Lump u;
 		
-		newLumps.add(l.lumps.get(0));
-		
+		newLumps.add(extractOrBlank(l, l.name     ));
 		newLumps.add(extractOrBlank(l, "THINGS",   l.things,   HexenThingCodec.instance));
 		newLumps.add(extractOrBlank(l, "LINEDEFS", l.linedefs, HexenLinedefCodec.instance));
 		newLumps.add(extractOrBlank(l, "SIDEDEFS", l.sidedefs, DoomSidedefCodec.instance));

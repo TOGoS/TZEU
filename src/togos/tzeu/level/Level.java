@@ -9,6 +9,7 @@ public class Level implements Cloneable
 {
 	public Level() { }
 	
+	public String name;
 	public List things;
 	public List linedefs;
 	public List sidedefs;
